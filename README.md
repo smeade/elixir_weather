@@ -201,3 +201,43 @@ iex(1)> ElixirWeather.NOAAWeather.fetch("CO")
 {:ok, ...
 ```
 
+### Parse the list.
+
+We now parse the XML to build a list urls for stations in the state we are seeking. Erlang provides XML support via [`:xmerl`](http://erlang.org/doc/man/xmerl.html). Instead of using `:xmerl` directly, I've chosen to use a library wrapper that lets us more easily parse the XML.
+
+[sweet_xml](https://github.com/awetzel/sweet_xml) looks like the most popular choice on hex.
+
+* Add SweetXml dependency
+
+### Fetch data for each station in our state
+
+Hacking around in iex I discovered how to:
+* parse the XML
+* grab just state and xml_url values
+* filter only the state we want
+* fetch XML from each station's xml_url
+
+```Elixir
+iex(11)> result = doc |> xmap(
+...(11)>   stations: [  
+...(11)>     ~x"//wx_station_index/station"l,
+...(11)>    state: ~x"./state/text()",
+...(11)>     xml_url: ~x"./xml_url/text()"
+...(11)>   ]
+...(11)> )
+%{stations: [%{state: 'AB',
+  xml_url: 'http://weather.gov/xml/current_obs/CWAV.xml'},
+%{state: 'AB', xml_url: 'http://weather.gov/xml/current_obs/CWBO.xml'}]}
+iex(12)> result
+%{stations: [%{state: 'AB',
+  xml_url: 'http://weather.gov/xml/current_obs/CWAV.xml'},
+%{state: 'AB', xml_url: 'http://weather.gov/xml/current_obs/CWBO.xml'}]}
+iex(13)> result.stations
+[%{state: 'AB', xml_url: 'http://weather.gov/xml/current_obs/CWAV.xml'},
+%{state: 'AB', xml_url: 'http://weather.gov/xml/current_obs/CWBO.xml'}]
+iex(20)> for station <- result.stations, station.state == 'AB', do: station      
+[%{state: 'AB', xml_url: 'http://weather.gov/xml/current_obs/CWAV.xml'},
+ %{state: 'AB', xml_url: 'http://weather.gov/xml/current_obs/CWBO.xml'}]
+iex(21)> for station <- result.stations, station.state == 'ABC', do: station
+[]
+```
