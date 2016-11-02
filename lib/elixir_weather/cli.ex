@@ -49,4 +49,3 @@ defmodule ElixirWeather.CLI do
     ElixirWeather.NOAAWeather.fetch(state_code)
   end
 end
-
