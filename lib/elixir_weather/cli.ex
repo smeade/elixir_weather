@@ -10,6 +10,7 @@ defmodule ElixirWeather.CLI do
 
   def main(argv) do
     parse_args(argv)
+    |> process
   end
 
   @doc """
@@ -27,8 +28,8 @@ defmodule ElixirWeather.CLI do
       { [ help: true ], _, _ }
         -> :help
 
-      { _, [ statecode ], _ }
-        -> { statecode }
+      { _, [ state_code ], _ }
+        -> { state_code }
 
       { _, [ ], _ }
         -> { @default_state }
@@ -36,4 +37,16 @@ defmodule ElixirWeather.CLI do
       _ -> :help
     end
   end
+
+  def process(:help) do
+    IO.puts """
+    usage: elixir_weather [ state_code | "#{@default_state}" ]
+    """
+    System.halt(0)
+  end
+
+  def process({state_code}) do
+    ElixirWeather.NOAAWeather.fetch(state_code)
+  end
 end
+
