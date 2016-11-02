@@ -180,7 +180,7 @@ $ mix run -e 'ElixirWeather.CLI.main(["-h"])'
 usage: elixir_weather [ state_code | "CO" ]
 ```
 
-#### Fetch a list of all stations.
+#### Install dependency
 
 We now need to decide what library to use to retrieve the XML from NOAA. [HTTPoison](https://github.com/edgurgel/httpoison) looks like a good start. [Install it](https://github.com/edgurgel/httpoison#installation).
 
@@ -189,6 +189,15 @@ After it's installed:
 ```Elixir
 iex(4)>  HTTPoison.start                                                
 {:ok, []}
-iex(5)> HTTPoison.get! "http://w1.weather.gov/xml/current_obs/index.xml"
-%HTTPoison.Response{body: "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<wx_station_index>\n        <credit>NOAA's National Weather Service</credit>\n        <credit_URL>http://weather.gov/</credit_URL>\n        <image>\n                <url>http://weather.gov/images/xml_logo.gif</url>\n                <title>NOAA's National Weather Service</title>\n                <link>http://weather.gov</link>\n        </image>\n        <suggested_pickup>08:00 EST</suggested_pickup>\n        <suggested_pickup_period>1140</suggested_pickup_period>\n\t<station>\n\t\t<station_id>CWAV</station_id>\n\t\t<state>AB</state>\n            \t<station_name>Sundre</station_name>\n\t\t<latitude>51.76667</latitude>...
+iex(5)> HTTPoison.get!
 ```
+### Fetch a list of all stations.
+
+* Create new module, `NOAAWeather`.
+* this will fetch data and handle responses
+
+```Elixir
+iex(1)> ElixirWeather.NOAAWeather.fetch("CO")
+{:ok, ...
+```
+
