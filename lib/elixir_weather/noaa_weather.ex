@@ -5,7 +5,7 @@ defmodule ElixirWeather.NOAAWeather do
 
   @weather_url Application.get_env(:elixir_weather, :noaa_url)
 
-  def fetch(state_code) do
+  def fetch_stations do
     @weather_url
     |> HTTPoison.get(@user_agent)
     |> handle_response

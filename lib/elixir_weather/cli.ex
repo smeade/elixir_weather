@@ -1,4 +1,5 @@
 defmodule ElixirWeather.CLI do
+  import SweetXml
 
   @default_state "CO"
 
@@ -46,6 +47,26 @@ defmodule ElixirWeather.CLI do
   end
 
   def process({state_code}) do
-    ElixirWeather.NOAAWeather.fetch(state_code)
+    ElixirWeather.NOAAWeather.fetch_stations
+    |> decode_response
+    |> extract_stations
+    |> filter_stations_for_state(state_code)
+  end
+
+  def decode_response({:ok, body}), do: body
+
+  def decode_response({:error, error}) do
+    {_, message} = List.keyfind(error, "message", 0)
+    IO.puts "Error fetching from NOAA: #{message}"
+    System.halt(2)
+  end
+
+  def extract_stations(wx_station_index) do
+    wx_station_index |> xpath( ~x"//station"l, state: ~x"./state/text()", url: ~x"./xml_url/text()")
+  end
+
+  def filter_stations_for_state(stations, state_code) do
+    charlist_state_code = String.to_charlist(state_code)
+    for station <- stations, station.state == charlist_state_code, do: station
   end
 end

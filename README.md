@@ -197,7 +197,7 @@ iex(5)> HTTPoison.get!
 * this will fetch data and handle responses
 
 ```Elixir
-iex(1)> ElixirWeather.NOAAWeather.fetch("CO")
+iex(1)> ElixirWeather.NOAAWeather.fetch_stations("CO")
 {:ok, ...
 ```
 
@@ -222,7 +222,7 @@ iex(11)> result = doc |> xmap(
 ...(11)>   stations: [  
 ...(11)>     ~x"//wx_station_index/station"l,
 ...(11)>    state: ~x"./state/text()",
-...(11)>     xml_url: ~x"./xml_url/text()"
+...(11)>    xml_url: ~x"./xml_url/text()"
 ...(11)>   ]
 ...(11)> )
 %{stations: [%{state: 'AB',
